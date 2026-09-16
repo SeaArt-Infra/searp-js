@@ -145,6 +145,8 @@ export class Client {
       getProjectEvaluation: 'GetProjectEvaluation', compareProjectEvaluation: 'CompareProjectEvaluation',
       cancelProjectEvaluation: 'CancelProjectEvaluation', resumeProjectEvaluation: 'ResumeProjectEvaluation',
       listProjectFeedback: 'ListProjectFeedback', createProjectFeedback: 'CreateProjectFeedback',
+      projectEngine: 'ProjectEngine', listAdminCards: 'ListAdminCards',
+      translationsQueue: 'TranslationsQueue', translationsCallback: 'TranslationsCallback',
     });
   }
 }

@@ -301,6 +301,22 @@ export class AdminService {
     return adminRequestJSON(this.client, 'GET', '/project-identity-migration/preview', undefined, options);
   }
 
+  projectEngine(projectId, method, enginePath, body, ...options) {
+    return adminRequestJSON(this.client, method, projectPath(projectId, `engine/${enginePath}`), body, options);
+  }
+
+  listAdminCards(query = {}, ...options) {
+    return adminRequestJSON(this.client, 'GET', `/cards${queryString(query)}`, undefined, options);
+  }
+
+  translationsQueue(query = {}, ...options) {
+    return adminRequestJSON(this.client, 'GET', `/translations/queue${queryString(query)}`, undefined, options);
+  }
+
+  translationsCallback(body, ...options) {
+    return adminRequestJSON(this.client, 'POST', '/translations/callback', body, options);
+  }
+
   listProjectRollouts(projectId, query = {}, ...options) {
     return adminRequestJSON(this.client, 'GET', `${projectPath(projectId, 'rollouts')}${queryString(query)}`, undefined, options);
   }
