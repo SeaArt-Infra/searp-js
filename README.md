@@ -52,6 +52,33 @@ experience version.
 | `client.versions` | Version preview |
 | `client.cinema` | Cinema rounds and image tasks |
 
+## Role Card Session
+
+Create a role card with `client.cards.create`, then open a session from that
+card:
+
+```js
+const card = await client.cards.create({
+  user_id: 'visitor-1',
+  name: 'Ada',
+  gender: 2,
+  introduction: 'Port pilot',
+  greeting: 'Welcome to the fog harbor.',
+  background: 'Knows the tides and shipping lanes.',
+  lang: 'en',
+});
+
+const session = await client.sessions.create({
+  user_id: 'visitor-1',
+  card_id: card.id,
+});
+console.log(session.id);
+```
+
+`card_version` is optional; omit it to pin the latest card version. Use
+`client.cards.list`, `client.cards.get`, `client.cards.update`, and
+`client.cards.delete` to maintain cards.
+
 ## Chat Turn
 
 ```js
