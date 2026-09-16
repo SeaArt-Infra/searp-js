@@ -133,6 +133,18 @@ export class Client {
       prepareProjectIdentityMigration: 'PrepareProjectIdentityMigration', purgeProjectIdentityMigration: 'PurgeProjectIdentityMigration',
       adoptProjectIdentityMigration: 'AdoptProjectIdentityMigration', revertProjectIdentityMigration: 'RevertProjectIdentityMigration',
       previewProjectIdentityMigration: 'PreviewProjectIdentityMigration',
+      listProjectRollouts: 'ListProjectRollouts', createProjectRollout: 'CreateProjectRollout',
+      getCurrentProjectRollouts: 'GetCurrentProjectRollouts', getProjectRollout: 'GetProjectRollout',
+      updateProjectRollout: 'UpdateProjectRollout', deleteProjectRollout: 'DeleteProjectRollout',
+      stopProjectRollout: 'StopProjectRollout', listProjectRolloutAudits: 'ListProjectRolloutAudits',
+      listProjectPresets: 'ListProjectPresets', createProjectPreset: 'CreateProjectPreset',
+      updateProjectPreset: 'UpdateProjectPreset', publishProjectPreset: 'PublishProjectPreset',
+      listProjectSessions: 'ListProjectSessions', updateProjectSession: 'UpdateProjectSession',
+      listProjectSuites: 'ListProjectSuites', createProjectSuite: 'CreateProjectSuite',
+      getProjectSuite: 'GetProjectSuite', listProjectEvaluations: 'ListProjectEvaluations',
+      getProjectEvaluation: 'GetProjectEvaluation', compareProjectEvaluation: 'CompareProjectEvaluation',
+      cancelProjectEvaluation: 'CancelProjectEvaluation', resumeProjectEvaluation: 'ResumeProjectEvaluation',
+      listProjectFeedback: 'ListProjectFeedback', createProjectFeedback: 'CreateProjectFeedback',
     });
   }
 }

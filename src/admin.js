@@ -301,6 +301,102 @@ export class AdminService {
     return adminRequestJSON(this.client, 'GET', '/project-identity-migration/preview', undefined, options);
   }
 
+  listProjectRollouts(projectId, query = {}, ...options) {
+    return adminRequestJSON(this.client, 'GET', `${projectPath(projectId, 'rollouts')}${queryString(query)}`, undefined, options);
+  }
+
+  createProjectRollout(projectId, body, ...options) {
+    return adminRequestJSON(this.client, 'POST', projectPath(projectId, 'rollouts'), body, options);
+  }
+
+  getCurrentProjectRollouts(projectId, ...options) {
+    return adminRequestJSON(this.client, 'GET', projectPath(projectId, 'rollouts/current'), undefined, options);
+  }
+
+  getProjectRollout(projectId, rolloutId, ...options) {
+    return adminRequestJSON(this.client, 'GET', projectPath(projectId, `rollouts/${encodeURIComponent(rolloutId)}`), undefined, options);
+  }
+
+  updateProjectRollout(projectId, rolloutId, body, ...options) {
+    return adminRequestJSON(this.client, 'PATCH', projectPath(projectId, `rollouts/${encodeURIComponent(rolloutId)}`), body, options);
+  }
+
+  deleteProjectRollout(projectId, rolloutId, ...options) {
+    return adminRequestJSON(this.client, 'DELETE', projectPath(projectId, `rollouts/${encodeURIComponent(rolloutId)}`), undefined, options);
+  }
+
+  stopProjectRollout(projectId, rolloutId, ...options) {
+    return adminRequestJSON(this.client, 'POST', projectPath(projectId, `rollouts/${encodeURIComponent(rolloutId)}/stop`), undefined, options);
+  }
+
+  listProjectRolloutAudits(projectId, rolloutId, query = {}, ...options) {
+    return adminRequestJSON(this.client, 'GET', `${projectPath(projectId, `rollouts/${encodeURIComponent(rolloutId)}/audit`)}${queryString(query)}`, undefined, options);
+  }
+
+  listProjectPresets(projectId, ...options) {
+    return adminRequestJSON(this.client, 'GET', projectPath(projectId, 'presets'), undefined, options);
+  }
+
+  createProjectPreset(projectId, body, ...options) {
+    return adminRequestJSON(this.client, 'POST', projectPath(projectId, 'presets'), body, options);
+  }
+
+  updateProjectPreset(projectId, presetId, body, ...options) {
+    return adminRequestJSON(this.client, 'PUT', projectPath(projectId, `presets/${encodeURIComponent(presetId)}`), body, options);
+  }
+
+  publishProjectPreset(projectId, presetId, body, ...options) {
+    return adminRequestJSON(this.client, 'POST', projectPath(projectId, `presets/${encodeURIComponent(presetId)}/publish`), body, options);
+  }
+
+  listProjectSessions(projectId, query = {}, ...options) {
+    return adminRequestJSON(this.client, 'GET', `${projectPath(projectId, 'sessions')}${queryString(query)}`, undefined, options);
+  }
+
+  updateProjectSession(projectId, sessionId, body, ...options) {
+    return adminRequestJSON(this.client, 'PATCH', projectPath(projectId, `sessions/${encodeURIComponent(sessionId)}`), body, options);
+  }
+
+  listProjectSuites(projectId, query = {}, ...options) {
+    return adminRequestJSON(this.client, 'GET', `${projectPath(projectId, 'suites')}${queryString(query)}`, undefined, options);
+  }
+
+  createProjectSuite(projectId, body, ...options) {
+    return adminRequestJSON(this.client, 'POST', projectPath(projectId, 'suites'), body, options);
+  }
+
+  getProjectSuite(projectId, suiteId, ...options) {
+    return adminRequestJSON(this.client, 'GET', projectPath(projectId, `suites/${encodeURIComponent(suiteId)}`), undefined, options);
+  }
+
+  listProjectEvaluations(projectId, query = {}, ...options) {
+    return adminRequestJSON(this.client, 'GET', `${projectPath(projectId, 'evaluations')}${queryString(query)}`, undefined, options);
+  }
+
+  getProjectEvaluation(projectId, evaluationId, ...options) {
+    return adminRequestJSON(this.client, 'GET', projectPath(projectId, `evaluations/${encodeURIComponent(evaluationId)}`), undefined, options);
+  }
+
+  compareProjectEvaluation(projectId, evaluationId, ...options) {
+    return adminRequestJSON(this.client, 'GET', projectPath(projectId, `evaluations/${encodeURIComponent(evaluationId)}/compare`), undefined, options);
+  }
+
+  cancelProjectEvaluation(projectId, evaluationId, ...options) {
+    return adminRequestJSON(this.client, 'POST', projectPath(projectId, `evaluations/${encodeURIComponent(evaluationId)}/cancel`), undefined, options);
+  }
+
+  resumeProjectEvaluation(projectId, evaluationId, ...options) {
+    return adminRequestJSON(this.client, 'POST', projectPath(projectId, `evaluations/${encodeURIComponent(evaluationId)}/resume`), undefined, options);
+  }
+
+  listProjectFeedback(projectId, query = {}, ...options) {
+    return adminRequestJSON(this.client, 'GET', `${projectPath(projectId, 'feedback')}${queryString(query)}`, undefined, options);
+  }
+
+  createProjectFeedback(projectId, body, ...options) {
+    return adminRequestJSON(this.client, 'POST', projectPath(projectId, 'feedback'), body, options);
+  }
+
 }
 
 

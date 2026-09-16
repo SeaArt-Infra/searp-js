@@ -119,3 +119,12 @@ stale `expected_revision` or an idempotency key reused with different input.
   `prepareProjectIdentityMigration`, `purgeProjectIdentityMigration`,
   `adoptProjectIdentityMigration`, `revertProjectIdentityMigration`,
   `previewProjectIdentityMigration`
+- `admin.listProjectRollouts`, `createProjectRollout`,
+  `getCurrentProjectRollouts`, `getProjectRollout`, `updateProjectRollout`,
+  `deleteProjectRollout`, `stopProjectRollout`, `listProjectRolloutAudits`
+- `admin.listProjectPresets`, `createProjectPreset`, `updateProjectPreset`,
+  `publishProjectPreset`, `listProjectSessions`, `updateProjectSession`
+- `admin.listProjectSuites`, `createProjectSuite`, `getProjectSuite`,
+  `listProjectEvaluations`, `getProjectEvaluation`,
+  `compareProjectEvaluation`, `cancelProjectEvaluation`,
+  `resumeProjectEvaluation`, `listProjectFeedback`, `createProjectFeedback`
