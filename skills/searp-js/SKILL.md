@@ -93,3 +93,29 @@ stale `expected_revision` or an idempotency key reused with different input.
 - `admin.request`, `health`, `whoami`, `agentContract`, `listProjects`,
   `createProject`, `getProject`, `deleteProject`, `rotateProjectToken`,
   `getProjectLive`, `updateProjectLive`
+- `admin.raw`, `projectRequest`, `getGlobalPack`, `updateGlobalPack`,
+  `getProjectPack`, `patchProjectPack`, `deleteProjectPack`, `forkProjectPack`
+- `admin.listCatalog`, `importCatalog`, `getCatalogCard`, `updateCatalogCard`,
+  `deleteCatalogCard`, `getCatalogCardCover`
+- `admin.listProjectCards`, `getProjectCard`, `updateProjectCard`,
+  `deleteProjectCard`, `setProjectCardListing`, `importProjectCard`,
+  `importProjectCardsBatch`, `forkProjectCard`, `listProjectCardVersions`,
+  `getProjectCardVersion`, `deleteProjectCardVersion`,
+  `restoreProjectCardVersion`
+- `admin.listProjectExperiments`, `createProjectExperiment`,
+  `getProjectExperiment`, `updateProjectExperiment`, `startProjectExperiment`,
+  `pauseProjectExperiment`, `stopProjectExperiment`
+- `admin.getProjectLLM`, `updateProjectLLM`, `deleteProjectLLM`
+- `admin.listProjectVersions`, `createProjectVersion`, `getProjectVersion`,
+  `diffProjectVersion`, `publishProjectVersion`, `getProjectRelease`,
+  `listProjectReleases`, `rollbackProjectRelease`
+- `admin.listProjectSystemPrompts`, `createProjectSystemPrompt`,
+  `setProjectSystemPromptDefault`, `getProjectSystemPrompt`,
+  `updateProjectSystemPrompt`, `listGlobalSystemPrompts`,
+  `createGlobalSystemPrompt`, `setGlobalSystemPromptDefault`,
+  `getGlobalSystemPrompt`
+- `admin.listProjectUserSessions`, `getProjectUserSession`,
+  `getProjectIdentityMigration`, `startProjectIdentityMigration`,
+  `prepareProjectIdentityMigration`, `purgeProjectIdentityMigration`,
+  `adoptProjectIdentityMigration`, `revertProjectIdentityMigration`,
+  `previewProjectIdentityMigration`

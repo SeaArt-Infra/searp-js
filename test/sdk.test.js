@@ -57,6 +57,29 @@ test('admin.getProject maps error envelope code and message', async () => {
   );
 });
 
+test('admin project and catalog paths match control-plane routes', async () => {
+  const seen = [];
+  const client = new Client({
+    apiKey: 'test-key',
+    adminBaseURL: 'https://admin.example.com/admin/v1',
+    fetch: async (url, init) => {
+      seen.push({ url: String(url), init });
+      if (String(url).endsWith('/cover')) {
+        return new Response('png-bytes', { status: 200, headers: { 'content-type': 'image/png' } });
+      }
+      return new Response(JSON.stringify({ ok: true }), { status: 200 });
+    },
+  });
+
+  await client.admin.listProjectVersions('p1', { cursor: '2' });
+  await client.admin.diffProjectVersion('p1', 'v1', 'v0');
+  const cover = await client.admin.getCatalogCardCover('card-1');
+  assert.equal(seen[0].url, 'https://admin.example.com/admin/v1/projects/p1/versions?cursor=2');
+  assert.equal(seen[1].url, 'https://admin.example.com/admin/v1/projects/p1/versions/v1/diff?against=v0');
+  assert.equal(seen[2].url, 'https://admin.example.com/admin/v1/catalog/card-1/cover');
+  assert.equal(cover, 'png-bytes');
+});
+
 test('sessions.create posts to /sessions with bearer token', async () => {
   let seen;
   const client = testClient(async (url, init) => {
