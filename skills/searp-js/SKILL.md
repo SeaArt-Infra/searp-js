@@ -38,8 +38,18 @@ const client = new Client({
 ## Create A Session
 
 ```js
-const session = await client.sessions.createExperience({ user_id: 'user-123' });
+const session = await client.sessions.create({
+  user_id: 'user-123',
+  request: {
+    character: { name: 'Ada', gender: 2 },
+    style: 1,
+    lang: 'en',
+  },
+});
 ```
+
+Use `client.sessions.createExperience` only when the project has already
+published an experience version.
 
 ## Run A Reply
 

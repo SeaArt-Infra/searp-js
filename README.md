@@ -23,14 +23,23 @@ const client = new Client({
   baseURL: 'https://rp.example.com',
 });
 
-const session = await client.sessions.createExperience({
+const session = await client.sessions.create({
   user_id: 'visitor-1',
+  request: {
+    character: { name: 'Ada', gender: 2 },
+    style: 1,
+    lang: 'en',
+  },
 }, withHeader('x-request-id', 'request-1'));
 console.log(session.id);
 ```
 
 `baseURL` defaults to `http://127.0.0.1:8788`; the API base is derived as
 `<baseURL>/v1` unless it already ends in `/v1`.
+
+`sessions.create` is the general session entry point. Use
+`sessions.createExperience` only when the project has already published an
+experience version.
 
 ## Services
 
