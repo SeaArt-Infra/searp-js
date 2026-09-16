@@ -1,0 +1,4 @@
+interface:
+  display_name: "SeaRP JavaScript SDK"
+  short_description: "Build SeaRP engine API integrations in JavaScript"
+  default_prompt: "Use $searp-js to implement a SeaRP engine SDK integration."
