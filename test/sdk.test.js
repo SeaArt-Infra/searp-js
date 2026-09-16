@@ -1,7 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { Client, ErrConflict, ErrNotFound, SeaRPError, withHeader, withHeaders } from '../src/index.js';
-import { defaultBaseURL, defaultAdminBaseURL, sdkVersion } from '../src/client.js';
+import { defaultBaseURL, sdkVersion } from '../src/client.js';
 
 function testClient(handler, config = {}) {
   return new Client({
@@ -14,70 +14,7 @@ function testClient(handler, config = {}) {
 
 test('exports default base URL and version', () => {
   assert.equal(defaultBaseURL, 'http://127.0.0.1:8788');
-  assert.equal(defaultAdminBaseURL, 'http://127.0.0.1:8790/admin/v1');
   assert.ok(sdkVersion);
-});
-
-test('admin.health posts to /health with bearer token', async () => {
-  let seen;
-  const client = new Client({
-    apiKey: 'test-key',
-    adminBaseURL: 'https://admin.example.com/admin/v1',
-    fetch: async (url, init) => {
-      seen = { url: String(url), init };
-      return new Response(JSON.stringify({ ok: true }), {
-        status: 200,
-        headers: { 'content-type': 'application/json' },
-      });
-    },
-  });
-
-  const result = await client.admin.health();
-  assert.equal(result.ok, true);
-  assert.equal(seen.url, 'https://admin.example.com/admin/v1/health');
-  assert.equal(seen.init.method, 'GET');
-  assert.equal(seen.init.headers.get('authorization'), 'Bearer test-key');
-});
-
-test('admin.getProject maps error envelope code and message', async () => {
-  const client = new Client({
-    apiKey: 'test-key',
-    adminBaseURL: 'https://admin.example.com/admin/v1',
-    fetch: async () => new Response(JSON.stringify({ error: { code: 'not_found', message: 'project not found' } }), { status: 404 }),
-  });
-  await assert.rejects(
-    () => client.admin.getProject('missing'),
-    (error) => {
-      assert.ok(error instanceof SeaRPError);
-      assert.equal(error.kind, ErrNotFound);
-      assert.equal(error.code, 'not_found');
-      assert.equal(error.message, 'project not found');
-      return true;
-    },
-  );
-});
-
-test('admin project and catalog paths match control-plane routes', async () => {
-  const seen = [];
-  const client = new Client({
-    apiKey: 'test-key',
-    adminBaseURL: 'https://admin.example.com/admin/v1',
-    fetch: async (url, init) => {
-      seen.push({ url: String(url), init });
-      if (String(url).endsWith('/cover')) {
-        return new Response('png-bytes', { status: 200, headers: { 'content-type': 'image/png' } });
-      }
-      return new Response(JSON.stringify({ ok: true }), { status: 200 });
-    },
-  });
-
-  await client.admin.listProjectVersions('p1', { cursor: '2' });
-  await client.admin.diffProjectVersion('p1', 'v1', 'v0');
-  const cover = await client.admin.getCatalogCardCover('card-1');
-  assert.equal(seen[0].url, 'https://admin.example.com/admin/v1/projects/p1/versions?cursor=2');
-  assert.equal(seen[1].url, 'https://admin.example.com/admin/v1/projects/p1/versions/v1/diff?against=v0');
-  assert.equal(seen[2].url, 'https://admin.example.com/admin/v1/catalog/card-1/cover');
-  assert.equal(cover, 'png-bytes');
 });
 
 test('sessions.create posts to /sessions with bearer token', async () => {

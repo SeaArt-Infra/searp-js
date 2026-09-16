@@ -6,10 +6,8 @@ import { EngineService } from './engine.js';
 import { CardsService } from './cards.js';
 import { VersionsService } from './versions.js';
 import { CinemaService } from './cinema.js';
-import { AdminService } from './admin.js';
 
 export const defaultBaseURL = 'http://127.0.0.1:8788';
-export const defaultAdminBaseURL = 'http://127.0.0.1:8790/admin/v1';
 export const defaultTimeout = 5 * 60 * 1000;
 export const sdkVersion = '0.1.0';
 
@@ -20,7 +18,6 @@ export class Client {
     this.apiKey = config.apiKey ?? config.APIKey ?? '';
     this.baseURL = endpoints.root;
     this.apiBaseURL = endpoints.api;
-    this.adminBaseURL = endpoints.admin;
     this.headers = config.headers ?? config.Headers ?? {};
 
     const shared = {
@@ -60,11 +57,6 @@ export class Client {
       baseURL: this.apiBaseURL,
       userAgent: `searp-js/${sdkVersion}`,
     }));
-    this.admin = new AdminService(new TransportClient({
-      ...shared,
-      baseURL: this.adminBaseURL,
-      userAgent: `searp-js/${sdkVersion}`,
-    }));
 
     this.Sessions = goStyleService(this.sessions, {
       create: 'Create', createExperience: 'CreateExperience', get: 'Get',
@@ -95,59 +87,6 @@ export class Client {
       getImageTask: 'GetImageTask', generateImageTask: 'GenerateImageTask',
       saveImageResult: 'SaveImageResult',
     });
-    this.Admin = goStyleService(this.admin, {
-      request: 'Request', health: 'Health', whoami: 'Whoami',
-      agentContract: 'AgentContract', listProjects: 'ListProjects',
-      createProject: 'CreateProject', getProject: 'GetProject',
-      deleteProject: 'DeleteProject', rotateProjectToken: 'RotateProjectToken',
-      getProjectLive: 'GetProjectLive', updateProjectLive: 'UpdateProjectLive',
-      raw: 'Raw', projectRequest: 'ProjectRequest',
-      getGlobalPack: 'GetGlobalPack', updateGlobalPack: 'UpdateGlobalPack',
-      getProjectPack: 'GetProjectPack', patchProjectPack: 'PatchProjectPack',
-      deleteProjectPack: 'DeleteProjectPack', forkProjectPack: 'ForkProjectPack',
-      listCatalog: 'ListCatalog', importCatalog: 'ImportCatalog',
-      getCatalogCard: 'GetCatalogCard', updateCatalogCard: 'UpdateCatalogCard',
-      deleteCatalogCard: 'DeleteCatalogCard', getCatalogCardCover: 'GetCatalogCardCover',
-      listProjectCards: 'ListProjectCards', getProjectCard: 'GetProjectCard',
-      updateProjectCard: 'UpdateProjectCard', deleteProjectCard: 'DeleteProjectCard',
-      setProjectCardListing: 'SetProjectCardListing', importProjectCard: 'ImportProjectCard',
-      importProjectCardsBatch: 'ImportProjectCardsBatch', forkProjectCard: 'ForkProjectCard',
-      listProjectCardVersions: 'ListProjectCardVersions', getProjectCardVersion: 'GetProjectCardVersion',
-      deleteProjectCardVersion: 'DeleteProjectCardVersion', restoreProjectCardVersion: 'RestoreProjectCardVersion',
-      listProjectExperiments: 'ListProjectExperiments', createProjectExperiment: 'CreateProjectExperiment',
-      getProjectExperiment: 'GetProjectExperiment', updateProjectExperiment: 'UpdateProjectExperiment',
-      startProjectExperiment: 'StartProjectExperiment', pauseProjectExperiment: 'PauseProjectExperiment',
-      stopProjectExperiment: 'StopProjectExperiment',
-      getProjectLLM: 'GetProjectLLM', updateProjectLLM: 'UpdateProjectLLM', deleteProjectLLM: 'DeleteProjectLLM',
-      listProjectVersions: 'ListProjectVersions', createProjectVersion: 'CreateProjectVersion',
-      getProjectVersion: 'GetProjectVersion', diffProjectVersion: 'DiffProjectVersion',
-      publishProjectVersion: 'PublishProjectVersion', getProjectRelease: 'GetProjectRelease',
-      listProjectReleases: 'ListProjectReleases', rollbackProjectRelease: 'RollbackProjectRelease',
-      listProjectSystemPrompts: 'ListProjectSystemPrompts', createProjectSystemPrompt: 'CreateProjectSystemPrompt',
-      setProjectSystemPromptDefault: 'SetProjectSystemPromptDefault', getProjectSystemPrompt: 'GetProjectSystemPrompt',
-      updateProjectSystemPrompt: 'UpdateProjectSystemPrompt',
-      listGlobalSystemPrompts: 'ListGlobalSystemPrompts', createGlobalSystemPrompt: 'CreateGlobalSystemPrompt',
-      setGlobalSystemPromptDefault: 'SetGlobalSystemPromptDefault', getGlobalSystemPrompt: 'GetGlobalSystemPrompt',
-      listProjectUserSessions: 'ListProjectUserSessions', getProjectUserSession: 'GetProjectUserSession',
-      getProjectIdentityMigration: 'GetProjectIdentityMigration', startProjectIdentityMigration: 'StartProjectIdentityMigration',
-      prepareProjectIdentityMigration: 'PrepareProjectIdentityMigration', purgeProjectIdentityMigration: 'PurgeProjectIdentityMigration',
-      adoptProjectIdentityMigration: 'AdoptProjectIdentityMigration', revertProjectIdentityMigration: 'RevertProjectIdentityMigration',
-      previewProjectIdentityMigration: 'PreviewProjectIdentityMigration',
-      listProjectRollouts: 'ListProjectRollouts', createProjectRollout: 'CreateProjectRollout',
-      getCurrentProjectRollouts: 'GetCurrentProjectRollouts', getProjectRollout: 'GetProjectRollout',
-      updateProjectRollout: 'UpdateProjectRollout', deleteProjectRollout: 'DeleteProjectRollout',
-      stopProjectRollout: 'StopProjectRollout', listProjectRolloutAudits: 'ListProjectRolloutAudits',
-      listProjectPresets: 'ListProjectPresets', createProjectPreset: 'CreateProjectPreset',
-      updateProjectPreset: 'UpdateProjectPreset', publishProjectPreset: 'PublishProjectPreset',
-      listProjectSessions: 'ListProjectSessions', updateProjectSession: 'UpdateProjectSession',
-      listProjectSuites: 'ListProjectSuites', createProjectSuite: 'CreateProjectSuite',
-      getProjectSuite: 'GetProjectSuite', listProjectEvaluations: 'ListProjectEvaluations',
-      getProjectEvaluation: 'GetProjectEvaluation', compareProjectEvaluation: 'CompareProjectEvaluation',
-      cancelProjectEvaluation: 'CancelProjectEvaluation', resumeProjectEvaluation: 'ResumeProjectEvaluation',
-      listProjectFeedback: 'ListProjectFeedback', createProjectFeedback: 'CreateProjectFeedback',
-      projectEngine: 'ProjectEngine', listAdminCards: 'ListAdminCards',
-      translationsQueue: 'TranslationsQueue', translationsCallback: 'TranslationsCallback',
-    });
   }
 }
 
@@ -161,8 +100,7 @@ export function resolveEndpoints(config = {}) {
   const baseURL = config.baseURL ?? config.BaseURL ?? '';
   const root = resolveRootURL(baseURL);
   const api = resolveAPIBaseURL(root, config.apiBaseURL ?? config.APIBaseURL ?? '');
-  const admin = resolveAdminBaseURL(root, config.adminBaseURL ?? config.AdminBaseURL ?? '', baseURL);
-  return { root, api, admin };
+  return { root, api };
 }
 
 function resolveRootURL(raw) {
@@ -174,12 +112,6 @@ function resolveAPIBaseURL(root, raw) {
   const parsed = new URL(root);
   if (parsed.pathname.endsWith('/v1')) return root;
   return joinURL(root, 'v1');
-}
-
-function resolveAdminBaseURL(root, raw, configuredBaseURL) {
-  if (raw) return normalizeURL(raw);
-  if (!configuredBaseURL) return normalizeURL(defaultAdminBaseURL);
-  return joinURL(root, 'admin/v1');
 }
 
 export function normalizeURL(raw) {

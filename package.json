@@ -1,7 +1,7 @@
 {
   "name": "searp_js",
   "version": "0.1.0",
-  "description": "SeaRP engine and control-plane JavaScript SDK for Node.js",
+  "description": "SeaRP engine JavaScript SDK for Node.js",
   "type": "module",
   "main": "./src/index.js",
   "exports": {
