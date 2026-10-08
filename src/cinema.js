@@ -5,8 +5,15 @@ export class CinemaService {
     this.client = client;
   }
 
-  listRounds(sessionID, ...options) {
-    return requestJSON(this.client, 'GET', `${path(sessionID)}/rounds`, undefined, options);
+  listRounds(sessionID, query = {}, ...options) {
+    if (query?.headers || query?.signal) { options.unshift(query); query = {}; }
+    const values = new URLSearchParams();
+    for (const key of ['limit', 'offset']) {
+      if (query[key] !== undefined && query[key] !== null) values.set(key, String(query[key]));
+    }
+    const encoded = values.toString();
+    const suffix = encoded ? `?${encoded}` : '';
+    return requestJSON(this.client, 'GET', `${path(sessionID)}/rounds${suffix}`, undefined, options);
   }
 
   createRound(sessionID, body, ...options) {

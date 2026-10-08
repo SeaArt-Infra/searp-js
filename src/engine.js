@@ -1,4 +1,4 @@
-import { requestJSON, streamSSE } from './service.js';
+import { requestJSON, requestText, streamSSE } from './service.js';
 
 export class EngineService {
   constructor(client) {
@@ -7,6 +7,14 @@ export class EngineService {
 
   health(...options) {
     return requestJSON(this.client, 'GET', '/health', undefined, options);
+  }
+
+  live(...options) {
+    return requestJSON(this.client, 'GET', '/live', undefined, options);
+  }
+
+  metrics(...options) {
+    return requestText(this.client, 'GET', '/metrics', undefined, options);
   }
 
   capabilities(...options) {

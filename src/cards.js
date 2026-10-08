@@ -1,8 +1,15 @@
 import { requestJSON } from './service.js';
+import { ErrInvalid, SeaRPError } from './errors.js';
 
 export class CardsService {
-  constructor(client) {
+  constructor(client, controlClient) {
     this.client = client;
+    this.controlClient = controlClient;
+  }
+
+  importBatch(body, ...options) {
+    if (!this.controlClient) throw new SeaRPError({ kind: ErrInvalid, message: 'cards.importBatch requires controlAPIBaseURL (full /admin/v1 base)' });
+    return requestJSON(this.controlClient, 'POST', '/cards/import/batch', body, options);
   }
 
   list(query = {}, ...options) {
@@ -33,12 +40,14 @@ export class CardsService {
     return requestJSON(this.client, 'PATCH', `/cards/${encodeURIComponent(id)}/listing`, body, options);
   }
 
-  listVersions(id, ...options) {
-    return requestJSON(this.client, 'GET', `/cards/${encodeURIComponent(id)}/versions`, undefined, options);
+  listVersions(id, query = {}, ...options) {
+    if (query?.headers || query?.signal) { options.unshift(query); query = {}; }
+    return requestJSON(this.client, 'GET', `/cards/${encodeURIComponent(id)}/versions${versionQueryString(query)}`, undefined, options);
   }
 
-  getVersion(id, version, ...options) {
-    return requestJSON(this.client, 'GET', `/cards/${encodeURIComponent(id)}/versions/${version}`, undefined, options);
+  getVersion(id, version, query = {}, ...options) {
+    if (query?.headers || query?.signal) { options.unshift(query); query = {}; }
+    return requestJSON(this.client, 'GET', `/cards/${encodeURIComponent(id)}/versions/${version}${cardQueryString(query)}`, undefined, options);
   }
 
   deleteVersion(id, version, ...options) {
@@ -49,8 +58,19 @@ export class CardsService {
     return requestJSON(this.client, 'PATCH', `/cards/${encodeURIComponent(id)}/versions/${version}/translations/${encodeURIComponent(lang)}/${encodeURIComponent(field)}`, body, options);
   }
 
-  restoreVersion(id, version, ...options) {
-    return requestJSON(this.client, 'POST', `/cards/${encodeURIComponent(id)}/versions/${version}/restore`, undefined, options);
+  restoreVersion(id, version, body, ...options) {
+    if (!body || typeof body !== 'object' || body.expected_latest_version === undefined) {
+      throw new SeaRPError({ kind: ErrInvalid, message: 'restore requires a body with expected_latest_version' });
+    }
+    return requestJSON(this.client, 'POST', `/cards/${encodeURIComponent(id)}/versions/${version}/restore`, body, options);
+  }
+
+  listTranslations(id, version, ...options) {
+    return requestJSON(this.client, 'GET', `/cards/${encodeURIComponent(id)}/versions/${version}/translations`, undefined, options);
+  }
+
+  saveTranslations(id, version, body, ...options) {
+    return requestJSON(this.client, 'POST', `/cards/${encodeURIComponent(id)}/versions/${version}/translations`, body, options);
   }
 
   listByUser(userID, query = {}, ...options) {
@@ -60,10 +80,22 @@ export class CardsService {
 
 function cardQueryString(query = {}) {
   const values = new URLSearchParams();
+  for (const key of ['limit', 'offset']) {
+    if (query[key] !== undefined && query[key] !== null) values.set(key, String(query[key]));
+  }
   if (query.lang) values.set('lang', String(query.lang));
   if (Array.isArray(query.ids) && query.ids.length) values.set('ids', query.ids.join(','));
   if (Array.isArray(query.cardIds) && query.cardIds.length) values.set('card_ids', query.cardIds.join(','));
   if (Array.isArray(query.card_ids) && query.card_ids.length) values.set('card_ids', query.card_ids.join(','));
+  const suffix = values.toString();
+  return suffix ? `?${suffix}` : '';
+}
+
+function versionQueryString(query = {}) {
+  const values = new URLSearchParams();
+  for (const key of ['limit', 'before_version']) {
+    if (query[key] !== undefined && query[key] !== null) values.set(key, String(query[key]));
+  }
   const suffix = values.toString();
   return suffix ? `?${suffix}` : '';
 }

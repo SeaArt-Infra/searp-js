@@ -21,14 +21,23 @@ export class SeaRPError extends Error {
 }
 
 export function newHTTPError(status, message, code = '') {
+  let payload;
+  try {
+    payload = JSON.parse(message);
+    if (payload?.error?.message) message = payload.error.message;
+    if (payload?.error?.code) code = payload.error.code;
+  } catch { /* Plain-text errors remain supported. */ }
   let kind = ErrGeneral;
-  if (status === 400) kind = ErrInvalid;
+  if (status === 400 || status === 422) kind = ErrInvalid;
   else if (status === 401 || status === 403) kind = ErrAuth;
   else if (status === 404) kind = ErrNotFound;
   else if (status === 409) kind = ErrConflict;
   else if (status === 429) kind = ErrQuota;
   else if (status === 408 || status === 504) kind = ErrTimeout;
-  return new SeaRPError({ kind, code, status, message });
+  const error = new SeaRPError({ kind, code, status, message });
+  error.payload = payload;
+  error.sessionId = payload?.session_id ?? '';
+  return error;
 }
 
 export function decodeJSON(payload) {

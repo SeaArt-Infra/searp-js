@@ -9,7 +9,8 @@
   },
   "files": [
     "src",
-    "README.md"
+    "README.md",
+    "API_REFERENCE.md"
   ],
   "scripts": {
     "test": "node --test"

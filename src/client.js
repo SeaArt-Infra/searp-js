@@ -42,11 +42,17 @@ export class Client {
       baseURL: this.apiBaseURL,
       userAgent: `searp-js/${sdkVersion}`,
     }));
+    const controlBase = config.controlAPIBaseURL ?? config.ControlAPIBaseURL ?? '';
+    const controlClient = controlBase ? new TransportClient({
+      ...shared,
+      baseURL: normalizeURL(controlBase),
+      userAgent: `searp-js/${sdkVersion}`,
+    }) : undefined;
     this.cards = new CardsService(new TransportClient({
       ...shared,
       baseURL: this.apiBaseURL,
       userAgent: `searp-js/${sdkVersion}`,
-    }));
+    }), controlClient);
     this.versions = new VersionsService(new TransportClient({
       ...shared,
       baseURL: this.apiBaseURL,
@@ -67,7 +73,7 @@ export class Client {
       run: 'Run', get: 'Get', list: 'List', recover: 'Recover', traces: 'Traces',
     });
     this.Engine = goStyleService(this.engine, {
-      health: 'Health', capabilities: 'Capabilities', models: 'Models',
+      health: 'Health', live: 'Live', metrics: 'Metrics', capabilities: 'Capabilities', models: 'Models',
       llmStatus: 'LLMStatus', llmCheck: 'LLMCheck',
       generationModels: 'GenerationModels', createGeneration: 'CreateGeneration',
       getGeneration: 'GetGeneration', assemble: 'Assemble',
@@ -75,10 +81,11 @@ export class Client {
     });
     this.Cards = goStyleService(this.cards, {
       list: 'List', create: 'Create', get: 'Get', update: 'Update',
-      delete: 'Delete', importCards: 'Import', setListing: 'SetListing',
+      delete: 'Delete', importCards: 'Import', importBatch: 'ImportBatch', setListing: 'SetListing',
       listVersions: 'ListVersions', getVersion: 'GetVersion',
       deleteVersion: 'DeleteVersion', updateTranslation: 'UpdateTranslation',
       restoreVersion: 'RestoreVersion', listByUser: 'ListByUser',
+      listTranslations: 'ListTranslations', saveTranslations: 'SaveTranslations',
     });
     this.Versions = goStyleService(this.versions, { preview: 'Preview' });
     this.Cinema = goStyleService(this.cinema, {

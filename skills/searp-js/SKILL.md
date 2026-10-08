@@ -40,16 +40,20 @@ const client = new Client({
 ```js
 const session = await client.sessions.create({
   user_id: 'user-123',
-  request: {
-    character: { name: 'Ada', gender: 2 },
-    style: 1,
+  card_info: {
+    name: 'Ada', gender: 2,
+    introduction: 'Port pilot',
+    greeting: 'Welcome to the fog harbor.',
+    background: 'Knows the tides and shipping lanes.',
     lang: 'en',
   },
 });
 ```
 
-Use `client.sessions.createExperience` only when the project has already
-published an experience version.
+Use `card_id`, `card_info`, or `version_id` with `sessions.create`;
+use `engine.debugChat` with `card_info` for temporary sampling/configuration.
+`sessions.create` rejects a nested `request`.
+Use `client.sessions.createExperience` for the currently published version.
 
 ## Create A Role Card Session
 
@@ -97,12 +101,12 @@ stale `expected_revision` or an idempotency key reused with different input.
 - `sessions.create`, `createExperience`, `get`, `historyMessage`, `turn`,
   `turnStream`, `patch`, `rewind`, `fork`, `edit`
 - `operations.run`, `get`, `list`, `recover`, `traces`
-- `engine.health`, `capabilities`, `models`, `llmStatus`, `llmCheck`,
+- `engine.health`, `live`, `metrics`, `capabilities`, `models`, `llmStatus`, `llmCheck`,
   `generationModels`, `createGeneration`, `getGeneration`, `assemble`,
   `debugChat`, `debugChatStream`
 - `cards.list`, `create`, `get`, `update`, `delete`, `importCards`,
   `setListing`, `listVersions`, `getVersion`, `deleteVersion`,
-  `updateTranslation`, `restoreVersion`, `listByUser`
+  `updateTranslation`, `restoreVersion`, `listTranslations`, `saveTranslations`, `importBatch`, `listByUser`
 - `versions.preview`
 - `cinema.listRounds`, `createRound`, `createRoundStream`, `getRound`,
   `getImageTask`, `generateImageTask`, `saveImageResult`
