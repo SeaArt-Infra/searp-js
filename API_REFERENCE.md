@@ -1,6 +1,6 @@
 # SeaRP API reference
 
-Synced with the SeaRP engine and project batch-import contract on 2026-10-08.
+Synced with the SeaRP engine and project batch-import contract on 2026-10-14.
 Paths below are relative to the engine `/v1` base; batch import uses `/admin/v1`.
 
 ## Routes
@@ -25,6 +25,7 @@ Paths below are relative to the engine `/v1` base; batch import uses `/admin/v1`
 | PATCH | `/sessions/{id}` | `sessions.patch` |
 | GET | `/sessions/{id}/history/{index}` | `sessions.historyMessage` |
 | POST | `/sessions/{id}/turns` | `sessions.turn / turnStream` |
+| POST | `/sessions/{id}/proactive` | `sessions.proactive / proactiveStream` |
 | POST | `/sessions/{id}/rewind` | `sessions.rewind` |
 | POST | `/sessions/{id}/fork` | `sessions.fork` |
 | POST | `/sessions/{id}/edit` | `sessions.edit` |
@@ -208,4 +209,3 @@ Configure `controlAPIBaseURL: 'https://rp.example.com/admin/v1'` on Client,
 then call `client.cards.importBatch({cards: [draft]})`.
 Go-style service aliases include the added methods.
 SSE events expose `id`; HTTP errors expose `payload` and `sessionId`.
-

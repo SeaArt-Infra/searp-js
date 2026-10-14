@@ -104,6 +104,40 @@ test('session stream yields token and done events', async () => {
   assert.equal(seen[2].done, true);
 });
 
+test('sessions.proactive posts the idempotent trigger and returns text', async () => {
+  let seen;
+  const client = testClient(async (url, init) => {
+    seen = { url: String(url), init, body: JSON.parse(init.body) };
+    return new Response(JSON.stringify({ id: 's1', revision: 2, text: 'Hello again', operation: { id: 'p1' } }), {
+      status: 200,
+      headers: { 'content-type': 'application/json' },
+    });
+  });
+  const response = await client.sessions.proactive('s1', { idempotency_key: 'p1' });
+  assert.equal(seen.url, 'https://example.com/v1/sessions/s1/proactive');
+  assert.equal(seen.init.method, 'POST');
+  assert.deepEqual(seen.body, { idempotency_key: 'p1' });
+  assert.equal(response.text, 'Hello again');
+  assert.equal(response.operation.id, 'p1');
+  assert.equal(await client.Sessions.Proactive('s1', { idempotency_key: 'p2' }).then((value) => value.revision), 2);
+});
+
+test('sessions.proactiveStream yields operation, token and done events', async () => {
+  const client = testClient(async () => {
+    const encoder = new TextEncoder();
+    const stream = new ReadableStream({
+      start(controller) {
+        controller.enqueue(encoder.encode('event: operation\ndata: {"id":"p1"}\n\nevent: token\ndata: Hi\n\nevent: done\ndata: s1\\nHi\n\n'));
+        controller.close();
+      },
+    });
+    return new Response(stream, { status: 200, headers: { 'content-type': 'text/event-stream' } });
+  });
+  const events = [];
+  for await (const event of client.sessions.proactiveStream('s1', { idempotency_key: 'p1', stream: true })) events.push(event);
+  assert.deepEqual(events.map((event) => event.event), ['operation', 'token', 'done']);
+});
+
 test('card paging, localized versions, translations and restore preserve the contract', async () => {
   const calls = [];
   const client = testClient(async (url, init) => {

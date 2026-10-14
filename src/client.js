@@ -67,6 +67,7 @@ export class Client {
     this.Sessions = goStyleService(this.sessions, {
       create: 'Create', createExperience: 'CreateExperience', get: 'Get',
       historyMessage: 'HistoryMessage', turn: 'Turn', turnStream: 'TurnStream',
+      proactive: 'Proactive', proactiveStream: 'ProactiveStream',
       patch: 'Patch', rewind: 'Rewind', fork: 'Fork', edit: 'Edit',
     });
     this.Operations = goStyleService(this.operations, {

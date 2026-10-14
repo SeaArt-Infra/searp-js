@@ -29,6 +29,14 @@ export class SessionsService {
     return streamSSE(this.client, 'POST', `/sessions/${encodeURIComponent(id)}/turns`, body, options);
   }
 
+  proactive(id, body, ...options) {
+    return requestJSON(this.client, 'POST', `/sessions/${encodeURIComponent(id)}/proactive`, body, options);
+  }
+
+  proactiveStream(id, body, ...options) {
+    return streamSSE(this.client, 'POST', `/sessions/${encodeURIComponent(id)}/proactive`, body, options);
+  }
+
   patch(id, body, ...options) {
     return requestJSON(this.client, 'PATCH', `/sessions/${encodeURIComponent(id)}`, body, options);
   }

@@ -235,6 +235,17 @@ const op = await client.operations.run(session.id, {
 
 For streaming, use `client.sessions.turnStream` and stop on `done`.
 
+Use `client.sessions.proactive` for an idempotent character-initiated message
+without user input, or `proactiveStream` for SSE:
+
+```js
+const response = await client.sessions.proactive(session.id, {
+  idempotency_key: 'proactive-001',
+  expected_revision: session.revision,
+});
+console.log(response.text);
+```
+
 ## Errors
 
 Catch `SeaRPError` and branch on `error.kind`. `ErrConflict` usually means a
@@ -243,7 +254,7 @@ stale `expected_revision` or an idempotency key reused with different input.
 ## Route Reference
 
 - `sessions.create`, `createExperience`, `get`, `historyMessage`, `turn`,
-  `turnStream`, `patch`, `rewind`, `fork`, `edit`
+  `turnStream`, `proactive`, `proactiveStream`, `patch`, `rewind`, `fork`, `edit`
 - `operations.run`, `get`, `list`, `recover`, `traces`
 - `engine.health`, `live`, `metrics`, `capabilities`, `models`, `llmStatus`, `llmCheck`,
   `generationModels`, `createGeneration`, `getGeneration`, `assemble`,
