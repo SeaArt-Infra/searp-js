@@ -8,7 +8,7 @@ export class CinemaService {
   listRounds(sessionID, query = {}, ...options) {
     if (query?.headers || query?.signal) { options.unshift(query); query = {}; }
     const values = new URLSearchParams();
-    for (const key of ['limit', 'offset']) {
+    for (const key of ['limit', 'offset', 'order']) {
       if (query[key] !== undefined && query[key] !== null) values.set(key, String(query[key]));
     }
     const encoded = values.toString();

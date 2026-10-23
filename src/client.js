@@ -6,6 +6,8 @@ import { EngineService } from './engine.js';
 import { CardsService } from './cards.js';
 import { VersionsService } from './versions.js';
 import { CinemaService } from './cinema.js';
+import { GroupCardsService } from './group-cards.js';
+import { GroupSessionsService } from './group-sessions.js';
 
 export const defaultBaseURL = 'http://127.0.0.1:8788';
 export const defaultTimeout = 5 * 60 * 1000;
@@ -64,10 +66,27 @@ export class Client {
       userAgent: `searp-js/${sdkVersion}`,
     }));
 
+    const groupTransport = () => new TransportClient({
+      ...shared, baseURL: this.apiBaseURL, userAgent: `searp-js/${sdkVersion}`,
+    });
+    this.groupCards = new GroupCardsService(groupTransport());
+    this.groupSessions = new GroupSessionsService(groupTransport());
+    this.GroupCards = goStyleService(this.groupCards, {
+      list: 'List', create: 'Create', get: 'Get', update: 'Update', delete: 'Delete',
+      setListing: 'SetListing', listVersions: 'ListVersions', getVersion: 'GetVersion',
+      listMembers: 'ListMembers', addMember: 'AddMember', updateMember: 'UpdateMember',
+      removeMember: 'RemoveMember', extractCharacters: 'ExtractCharacters', preview: 'Preview',
+      importCards: 'Import', listTranslations: 'ListTranslations', saveTranslations: 'SaveTranslations',
+    });
+    this.GroupSessions = goStyleService(this.groupSessions, {
+      create: 'Create', turn: 'Turn', turnStream: 'TurnStream', getTurn: 'GetTurn', prompt: 'Prompt',
+    });
+
     this.Sessions = goStyleService(this.sessions, {
       create: 'Create', createExperience: 'CreateExperience', get: 'Get',
       historyMessage: 'HistoryMessage', turn: 'Turn', turnStream: 'TurnStream',
       proactive: 'Proactive', proactiveStream: 'ProactiveStream',
+      inspiration: 'Inspiration',
       patch: 'Patch', rewind: 'Rewind', fork: 'Fork', edit: 'Edit',
     });
     this.Operations = goStyleService(this.operations, {
@@ -87,6 +106,7 @@ export class Client {
       deleteVersion: 'DeleteVersion', updateTranslation: 'UpdateTranslation',
       restoreVersion: 'RestoreVersion', listByUser: 'ListByUser',
       listTranslations: 'ListTranslations', saveTranslations: 'SaveTranslations',
+      untranslated: 'Untranslated', forkTranslations: 'ForkTranslations', fork: 'Fork',
     });
     this.Versions = goStyleService(this.versions, { preview: 'Preview' });
     this.Cinema = goStyleService(this.cinema, {

@@ -12,6 +12,8 @@ export { EngineService } from './engine.js';
 export { CardsService } from './cards.js';
 export { VersionsService } from './versions.js';
 export { CinemaService } from './cinema.js';
+export { GroupCardsService } from './group-cards.js';
+export { GroupSessionsService } from './group-sessions.js';
 export {
   SeaRPError as Error,
   SeaRPError,

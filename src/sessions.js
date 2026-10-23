@@ -41,6 +41,10 @@ export class SessionsService {
     return requestJSON(this.client, 'PATCH', `/sessions/${encodeURIComponent(id)}`, body, options);
   }
 
+  inspiration(id, body = {}, ...options) {
+    return requestJSON(this.client, 'POST', `/sessions/${encodeURIComponent(id)}/inspiration`, body ?? {}, options);
+  }
+
   rewind(id, body, ...options) {
     return requestJSON(this.client, 'POST', `/sessions/${encodeURIComponent(id)}/rewind`, body, options);
   }

@@ -47,6 +47,38 @@ Use `engine.debugChat` for temporary card/sampling configurations;
 See [API reference](API_REFERENCE.md) for all routes, pagination, translations,
 multimodal input, per-turn parameters, and migration notes.
 
+## Release API update
+
+Aligned with SeaRP release API docs `af4e254` on 2026-10-23. The SDK now
+covers group story cards and sessions, player inspiration suggestions, missing
+translation queries, translation reuse, catalog fork and Cinema order.
+
+```js
+const suggestions = await client.sessions.inspiration(session.id, { lang: 'zh' });
+console.log(suggestions.replies);
+
+const group = await client.groupSessions.create({
+  group_id: groupId, user_id: 'visitor-1', mode: 'group_chat',
+});
+const turn = await client.groupSessions.turn(group.id, {
+  content: 'Hello everyone.', expected_revision: group.revision,
+}, withHeader('Idempotency-Key', 'group-turn-001'));
+console.log(turn.revision, turn.turn.segments);
+```
+
+Import `withHeader` from `searp_js` for per-request headers.
+
+Use `client.groupSessions.turnStream` for group SSE.
+Handle segment events, errors and disconnects; only done confirms completion.
+Inspiration changes no history and calls the model again on each retry.
+
+`POST /v1/cards` is deprecated and scheduled to sunset on 2027-01-01.
+The role-card creation example below remains for existing integrations.
+For catalog cards, configure `controlAPIBaseURL` and call
+`client.cards.fork` with a project ID and `catalog_ids`; inspect
+both `items` and `errors`. See [API reference](API_REFERENCE.md) for route
+coverage, import-document differences, group request fields and recovery.
+
 ## Services
 
 | Service | Purpose |
@@ -58,7 +90,7 @@ multimodal input, per-turn parameters, and migration notes.
 | `client.versions` | Version preview |
 | `client.cinema` | Cinema rounds and image tasks |
 
-## Role Card Session
+## Legacy Role Card Creation
 
 Create a role card with `client.cards.create`, then open a session from that
 card:
@@ -199,7 +231,7 @@ use `engine.debugChat` with `card_info` for temporary sampling/configuration.
 `sessions.create` rejects a nested `request`.
 Use `client.sessions.createExperience` for the currently published version.
 
-## Create A Role Card Session
+## Legacy Role Card Creation
 
 ```js
 const card = await client.cards.create({
@@ -235,26 +267,44 @@ const op = await client.operations.run(session.id, {
 
 For streaming, use `client.sessions.turnStream` and stop on `done`.
 
-Use `client.sessions.proactive` for an idempotent character-initiated message
-without user input, or `proactiveStream` for SSE:
-
-```js
-const response = await client.sessions.proactive(session.id, {
-  idempotency_key: 'proactive-001',
-  expected_revision: session.revision,
-});
-console.log(response.text);
-```
-
 ## Errors
 
 Catch `SeaRPError` and branch on `error.kind`. `ErrConflict` usually means a
 stale `expected_revision` or an idempotency key reused with different input.
 
+## Release API additions (2026-10-23)
+
+Use `client.groupCards` for story cards, immutable versions, members,
+imports, preview and translations. Use `client.groupSessions` for creating group
+sessions, generating JSON/SSE turns, querying turn records and prompts.
+Member removals require a JSON body with `user_id` and
+`expected_latest_version`. Group generation takes `content` and supports a
+stable `Idempotency-Key` header; preserve the key and original input on retry.
+JSON responses include the flattened session revision and group `turn.segments`.
+The shared SSE parser also exposes `segment_*` and `parser_warning` events.
+Read history through the ordinary session get method.
+
+`client.sessions.inspiration` returns positive/neutral player reply
+suggestions. It accepts an empty body or per-call language and sampling,
+changes no history/revision, and has no SSE or idempotency. Every retry calls
+the model again. `client.cards.untranslated` queries missing
+translations; `forkTranslations` copies existing catalog translations.
+Check per-item errors even when HTTP is 200.
+
+Card creation is deprecated with sunset 2027-01-01; existing create examples
+are for compatibility. Use catalog fork with `catalog_ids` and an explicit
+Control API base for onboarding published cards. Legacy batch-import is kept
+for older deployments. Consult API_REFERENCE.md for import payload differences
+between the release documents and registered handlers.
+Cinema lists support descending offset order; returned arrays remain sorted
+by ascending sequence. Recover abandon always needs
+`acknowledge_unknown: true`; use operation revision for recovery and session
+revision for generation. Terminal operation evidence defaults to 7 hours.
+
 ## Route Reference
 
 - `sessions.create`, `createExperience`, `get`, `historyMessage`, `turn`,
-  `turnStream`, `proactive`, `proactiveStream`, `patch`, `rewind`, `fork`, `edit`
+  `turnStream`, `proactive`, `proactiveStream`, `inspiration`, `patch`, `rewind`, `fork`, `edit`
 - `operations.run`, `get`, `list`, `recover`, `traces`
 - `engine.health`, `live`, `metrics`, `capabilities`, `models`, `llmStatus`, `llmCheck`,
   `generationModels`, `createGeneration`, `getGeneration`, `assemble`,
@@ -265,4 +315,8 @@ stale `expected_revision` or an idempotency key reused with different input.
 - `versions.preview`
 - `cinema.listRounds`, `createRound`, `createRoundStream`, `getRound`,
   `getImageTask`, `generateImageTask`, `saveImageResult`
+
+- `cards.untranslated`, `forkTranslations`, `fork`
+- `groupCards`: CRUD, listing, versions, roster, characters, preview, import, translations
+- `groupSessions`: create, turn, turn stream, get turn, prompt
 </script>

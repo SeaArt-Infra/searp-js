@@ -7,6 +7,7 @@ export class CardsService {
     this.controlClient = controlClient;
   }
 
+  /** @deprecated Legacy deployment route; current release onboarding uses fork. */
   importBatch(body, ...options) {
     if (!this.controlClient) throw new SeaRPError({ kind: ErrInvalid, message: 'cards.importBatch requires controlAPIBaseURL (full /admin/v1 base)' });
     return requestJSON(this.controlClient, 'POST', '/cards/import/batch', body, options);
@@ -16,8 +17,26 @@ export class CardsService {
     return requestJSON(this.client, 'GET', `/cards${cardQueryString(query)}`, undefined, options);
   }
 
+  /** @deprecated Scheduled to sunset on 2027-01-01; use delegated import or catalog fork. */
   create(body, ...options) {
     return requestJSON(this.client, 'POST', '/cards', body, options);
+  }
+
+  fork(projectID, body, ...options) {
+    if (!this.controlClient) throw new SeaRPError({ kind: ErrInvalid, message: 'cards.fork requires controlAPIBaseURL (full /admin/v1 base)' });
+    return requestJSON(this.controlClient, 'POST', `/projects/${encodeURIComponent(projectID)}/cards/fork`, body, options);
+  }
+
+  untranslated(query, ...options) {
+    const values = new URLSearchParams();
+    for (const key of ['locale', 'limit', 'offset', 'include_partial']) {
+      if (query[key] !== undefined && query[key] !== null) values.set(key, String(query[key]));
+    }
+    return requestJSON(this.client, 'GET', `/cards/untranslated?${values}`, undefined, options);
+  }
+
+  forkTranslations(body, ...options) {
+    return requestJSON(this.client, 'POST', '/cards/translations/fork', body, options);
   }
 
   get(id, query = {}, ...options) {
