@@ -14,6 +14,7 @@ export { VersionsService } from './versions.js';
 export { CinemaService } from './cinema.js';
 export { GroupCardsService } from './group-cards.js';
 export { GroupSessionsService } from './group-sessions.js';
+export { WorldBookService, WorldBooksService } from './world-books.js';
 export {
   SeaRPError as Error,
   SeaRPError,

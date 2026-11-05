@@ -45,6 +45,10 @@ export class SessionsService {
     return requestJSON(this.client, 'POST', `/sessions/${encodeURIComponent(id)}/inspiration`, body ?? {}, options);
   }
 
+  customTask(id, body, ...options) {
+    return requestJSON(this.client, 'POST', `/sessions/${encodeURIComponent(id)}/custom-task`, body, options);
+  }
+
   rewind(id, body, ...options) {
     return requestJSON(this.client, 'POST', `/sessions/${encodeURIComponent(id)}/rewind`, body, options);
   }

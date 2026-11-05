@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { Client, GroupCardsService, GroupSessionsService, withHeader } from '../src/index.js';
+import { Client, GroupCardsService, GroupSessionsService, WorldBooksService, withHeader } from '../src/index.js';
 
 test('group cards preserve filters, localization, member CAS bodies and aliases', async () => {
   const calls = [];
@@ -97,4 +97,28 @@ test('release JSON helpers preserve empty inspiration, partial translation failu
   assert.equal(calls[5].url.searchParams.get('turn_id'), 'a/b&c');
   assert.equal(calls[6].url.pathname, '/v1/sessions/s1/group/turns/a%2Fb');
   assert.equal(calls[7].url.pathname, '/v1/group-sessions');
+});
+
+test('world books, custom tasks and expanded translation queries use current routes', async () => {
+  const calls = [];
+  const client = new Client({ fetch: async (url, init) => {
+    calls.push({ url: new URL(url), method: init.method, body: init.body && JSON.parse(init.body) });
+    return new Response('{}');
+  } });
+  assert.ok(client.worldBooks instanceof WorldBooksService);
+  await client.Sessions.CustomTask('s1', { pe: 'summarize', model: 'm1' });
+  await client.Cards.Translate('c1', { lang: 'zh' });
+  await client.Cards.Untranslated({ card_ids: ['c1', 'c2'], locales: ['zh', 'ja'], missing_only: true, q: 'Ada' });
+  await client.WorldBooks.List({ limit: 10, cursor: 'c0' });
+  await client.WorldBooks.Create({ title: 'Lore' });
+  await client.WorldBooks.Get('book/1');
+  await client.WorldBooks.Delete('book/1');
+  await client.WorldBooks.CatalogList();
+  await client.WorldBooks.CatalogGet('book/1');
+  assert.equal(calls[0].url.pathname, '/v1/sessions/s1/custom-task');
+  assert.equal(calls[1].url.pathname, '/v1/cards/c1/translate');
+  assert.equal(calls[2].url.searchParams.get('card_ids'), 'c1,c2');
+  assert.equal(calls[2].url.searchParams.get('locales'), 'zh,ja');
+  assert.equal(calls[2].url.searchParams.get('missing_only'), 'true');
+  assert.equal(calls[3].url.search, '?limit=10&cursor=c0');
 });

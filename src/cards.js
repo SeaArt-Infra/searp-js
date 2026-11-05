@@ -29,10 +29,19 @@ export class CardsService {
 
   untranslated(query, ...options) {
     const values = new URLSearchParams();
-    for (const key of ['locale', 'limit', 'offset', 'include_partial']) {
+    for (const key of ['locale', 'limit', 'offset', 'include_partial', 'q', 'missing_only', 'include_total', 'languages', 'fields', 'locales']) {
       if (query[key] !== undefined && query[key] !== null) values.set(key, String(query[key]));
     }
-    return requestJSON(this.client, 'GET', `/cards/untranslated?${values}`, undefined, options);
+    for (const key of ['card_ids', 'cardIds']) {
+      if (Array.isArray(query[key])) { values.set('card_ids', query[key].join(',')); break; }
+      if (query[key] !== undefined && query[key] !== null) { values.set('card_ids', String(query[key])); break; }
+    }
+    const suffix = values.toString() ? `?${values}` : '';
+    return requestJSON(this.client, 'GET', `/cards/untranslated${suffix}`, undefined, options);
+  }
+
+  translate(id, body, ...options) {
+    return requestJSON(this.client, 'POST', `/cards/${encodeURIComponent(id)}/translate`, body, options);
   }
 
   forkTranslations(body, ...options) {

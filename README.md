@@ -87,6 +87,7 @@ coverage, import-document differences, group request fields and recovery.
 | `client.operations` | Idempotent paid operations, recovery, traces |
 | `client.engine` | Health, models, generations, assemble, debug chat |
 | `client.cards` | Role-card CRUD, versions, translations |
+| `client.worldBooks` | Project and catalog world books |
 | `client.versions` | Version preview |
 | `client.cinema` | Cinema rounds and image tasks |
 
@@ -311,7 +312,9 @@ revision for generation. Terminal operation evidence defaults to 7 hours.
   `debugChat`, `debugChatStream`
 - `cards.list`, `create`, `get`, `update`, `delete`, `importCards`,
   `setListing`, `listVersions`, `getVersion`, `deleteVersion`,
-  `updateTranslation`, `restoreVersion`, `listTranslations`, `saveTranslations`, `importBatch`, `listByUser`
+  `updateTranslation`, `restoreVersion`, `listTranslations`, `saveTranslations`, `translate`, `untranslated`, `importBatch`, `listByUser`
+- `sessions.customTask`
+- `worldBooks`: list, create, get, delete, catalog list/get
 - `versions.preview`
 - `cinema.listRounds`, `createRound`, `createRoundStream`, `getRound`,
   `getImageTask`, `generateImageTask`, `saveImageResult`

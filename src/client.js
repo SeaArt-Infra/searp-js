@@ -8,6 +8,7 @@ import { VersionsService } from './versions.js';
 import { CinemaService } from './cinema.js';
 import { GroupCardsService } from './group-cards.js';
 import { GroupSessionsService } from './group-sessions.js';
+import { WorldBooksService } from './world-books.js';
 
 export const defaultBaseURL = 'http://127.0.0.1:8788';
 export const defaultTimeout = 5 * 60 * 1000;
@@ -71,6 +72,9 @@ export class Client {
     });
     this.groupCards = new GroupCardsService(groupTransport());
     this.groupSessions = new GroupSessionsService(groupTransport());
+    this.worldBooks = new WorldBooksService(new TransportClient({
+      ...shared, baseURL: this.apiBaseURL, userAgent: `searp-js/${sdkVersion}`,
+    }));
     this.GroupCards = goStyleService(this.groupCards, {
       list: 'List', create: 'Create', get: 'Get', update: 'Update', delete: 'Delete',
       setListing: 'SetListing', listVersions: 'ListVersions', getVersion: 'GetVersion',
@@ -87,6 +91,7 @@ export class Client {
       historyMessage: 'HistoryMessage', turn: 'Turn', turnStream: 'TurnStream',
       proactive: 'Proactive', proactiveStream: 'ProactiveStream',
       inspiration: 'Inspiration',
+      customTask: 'CustomTask',
       patch: 'Patch', rewind: 'Rewind', fork: 'Fork', edit: 'Edit',
     });
     this.Operations = goStyleService(this.operations, {
@@ -107,6 +112,7 @@ export class Client {
       restoreVersion: 'RestoreVersion', listByUser: 'ListByUser',
       listTranslations: 'ListTranslations', saveTranslations: 'SaveTranslations',
       untranslated: 'Untranslated', forkTranslations: 'ForkTranslations', fork: 'Fork',
+      translate: 'Translate',
     });
     this.Versions = goStyleService(this.versions, { preview: 'Preview' });
     this.Cinema = goStyleService(this.cinema, {
@@ -114,6 +120,10 @@ export class Client {
       createRoundStream: 'CreateRoundStream', getRound: 'GetRound',
       getImageTask: 'GetImageTask', generateImageTask: 'GenerateImageTask',
       saveImageResult: 'SaveImageResult',
+    });
+    this.WorldBooks = goStyleService(this.worldBooks, {
+      list: 'List', get: 'Get', create: 'Create', delete: 'Delete',
+      catalogList: 'CatalogList', catalogGet: 'CatalogGet',
     });
   }
 }
