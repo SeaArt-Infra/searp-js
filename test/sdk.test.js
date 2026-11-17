@@ -235,7 +235,7 @@ test('batch import uses explicit Control API with the project token', async () =
 
 test('chat passes multimodal and per-turn options unchanged and retains imported-history evidence', async () => {
   const message = [{ type: 'text', text: 'what?' }, { type: 'image_url', image_url: { url: 'https://cdn.example/a.png', detail: 'auto' } }];
-  const body = { action: 'reply', message, lang: 'zh', lastest_system_prompt: 'brief', favorability_score: 45, user: { name: 'Visitor' }, metadata: { history: [{ role: 'user', content: 'hi' }] }, top_p: 0.9, thinking_mode: true };
+  const body = { action: 'reply', message, lang: 'zh', style_prompt_override: 'Speak tersely.', lastest_system_prompt: 'brief', favorability_score: 45, user: { name: 'Visitor' }, metadata: { history: [{ role: 'user', content: 'hi' }] }, top_p: 0.9, thinking_mode: true };
   const client = testClient(async (url, init) => {
     assert.deepEqual(JSON.parse(init.body), body);
     return new Response(JSON.stringify({ history: [{ role: 'user', content: message }], history_import: { seeded: { messages: 1, dropped: 0 } }, prompt_redacted: true }));
