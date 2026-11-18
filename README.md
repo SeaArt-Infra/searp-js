@@ -49,7 +49,6 @@ multimodal input, per-turn parameters, and migration notes.
 
 This reference covers the SeaRP engine `/v1` API. The website Agent contract
 at `/admin/v1/agent/contract` is a separate interface and is not part of this SDK.
-For language-specific client methods, see the [JavaScript SDK API mapping](https://github.com/SeaArt-Infra/searp-js/blob/main/API_REFERENCE.md).
 
 ## Release API update
 
